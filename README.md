@@ -6,14 +6,21 @@
 # Readme
 
 ![Licence](https://img.shields.io/github/license/cosmic-plus/js-loopcall.svg)
+![Build](https://img.shields.io/codeship/09be3150-c618-0137-89ba-4a7bef1c9b94)
+[![Coverage](https://coveralls.io/repos/github/cosmic-plus/js-loopcall/badge.svg)](https://coveralls.io/github/cosmic-plus/js-loopcall)
 [![Dependencies](https://badgen.net/david/dep/cosmic-plus/js-loopcall)](https://david-dm.org/cosmic-plus/js-loopcall)
 ![Vulnerabilities](https://snyk.io/test/npm/@cosmic-plus/loopcall/badge.svg)
-![Size](https://badgen.net/bundlephobia/minzip/@cosmic-plus/loopcall)
 ![Downloads](https://badgen.net/npm/dt/@cosmic-plus/loopcall)
+![Bundle](https://badgen.net/badgesize/gzip/cosmic-plus/js-loopcall-web/master/loopcall.js?label=bundle)
 
-**Loopcall** is a tiny library that enable unlimited complex queries to Horizon
-nodes. It takes a _CallBuilder_ and accept a few optional parameter. It returns
-an array of records similar to the ones returned by `CallBuilder.call()`.
+Implements limitless advanced queries to Stellar Horizon nodes.
+
+## Introduction
+
+**Loopcall** is a tiny library that enables unlimited complex queries to
+Horizon nodes. It takes a _CallBuilder_ and accepts a few optional
+parameters. It returns an array of records similar to the ones returned by
+`CallBuilder.call()`.
 
 ## Installation
 
@@ -28,7 +35,7 @@ In your script: `const loopcall = require("@cosmic-plus/loopcall")`
 
 `bower install cosmic-plus-loopcall`
 
-In your HTML:
+In your HTML page:
 
 ```HTML
 <script src="./bower_components/cosmic-plus-loopcall/loopcall.js"></script>
@@ -36,18 +43,21 @@ In your HTML:
 
 ### HTML
 
-In your HTML:
+In your HTML page:
 
 ```HTML
 <script src="https://cdn.cosmic.plus/loopcall@1.x"></script>
 ```
 
-_Note:_ For production release it is advised to serve your own copy of the
-library.
+_Note:_ For production release it is advised to serve your copy of the library.
 
 ## Usage
 
-### Fetch more than 200 records
+### Methods
+
+#### loopcall(callBuilder, [options]) ⇒ `Array`
+
+**Fetch more than 200 records**
 
 To get an arbitrary amount of record:
 
@@ -63,7 +73,7 @@ const callBuilder = server.transactions().forAccount("GDE...YBX")
 const allTransactions = await loopcall(callBuilder)
 ```
 
-### Conditional Break
+**Conditional Break**
 
 To stop fetching records when a condition is met:
 
@@ -75,10 +85,10 @@ const thisYearTransactions = await loopcall(callBuilder, {
 ```
 
 `breaker` is a _Function_ that is called over each fetched record. Once it
-returns `true`, the fetching loop breaks and the record that triggered the break
-is discarded.
+returns `true`, the fetching loop breaks and the record that triggered the
+break is discarded.
 
-### Conditional Filtering
+**Conditional Filtering**
 
 To filter records by condition:
 
@@ -89,14 +99,15 @@ const transactionsWithoutMemo = await loopcall(callBuilder, {
 })
 ```
 
-`filter`is a _Function_ that is called over each fetched record. When provided,
-the records are added to the query results only when it returns `true`.
+`filter` is a _Function_ that is called over each fetched record. When
+provided, the records are added to the query results only when it returns
+`true`.
 
-### Iterating over records on-the-fly
+**Iterating over records on-the-fly**
 
-In some situations waiting for the result to be concatenated is not an option.
-`breaker` offer the possibility of iterating over records while they are
-fetched:
+In some situations waiting for the result to be concatenated is not an
+option. `filter` offers the possibility of iterating over records while they
+are fetched:
 
 ```js
 const callBuilder = server.transactions()
@@ -106,14 +117,13 @@ async function showTxUntilScreenIsFilled(record) {
   await endOfPageReached()
 }
 
-loopcall(callBuilder, { breaker: showTxUntilScreenIsFilled })
+loopcall(callBuilder, { filter: showTxUntilScreenIsFilled })
 ```
 
 This example shows a part of the code to implement unlimited scrolling on a
-webpage showing the last transactions on a Stellar network. As
-`showTxUntilScreenIsFilled` never returns `true`, the loop never breaks.
+webpage showing the last transactions on a Stellar network.
 
-### Combining parameters
+**Combining parameters**
 
 All those parameters may be combined together:
 
@@ -136,3 +146,19 @@ const the20firstAccountCreations = await loopcall(callBuilder, {
 ```
 
 When both are provided, `breaker` is called before `filter`.
+
+| Param             | Type          | Description                                                                                                                                                                    |
+| ----------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| callBuilder       | `CallBuilder` | A CallBuilder object                                                                                                                                                           |
+| [options]         | `Object`      |                                                                                                                                                                                |
+| [options.limit]   | `Integer`     | The maximum number of record to return                                                                                                                                         |
+| [options.filter]  | `function`    | A function that accepts a record argument. It is called with each fetched record. If it returns a true value, the record is added to returned records, else it is discarded.   |
+| [options.breaker] | `function`    | A function that accepts a record argument. It is called with each fetched record. If it returns a true value, the loop ends and the array of the filtered records is returned. |
+
+## Links
+
+**Organization:** [Cosmic.plus](https://cosmic.plus/) | [@GitHub](https://git.cosmic.plus) | [@NPM](https://www.npmjs.com/search?q=cosmic-plus)
+
+**Follow:** [Reddit](https://reddit.com/r/cosmic_plus) | [Twitter](https://twitter.com/cosmic_plus) | [Medium](https://medium.com/cosmic-plus) | [Codepen](https://codepen.io/cosmic-plus)
+
+**Talk:** [Telegram](https://t.me/cosmic_plus) | [Keybase](https://keybase.io/team/cosmic_plus)
